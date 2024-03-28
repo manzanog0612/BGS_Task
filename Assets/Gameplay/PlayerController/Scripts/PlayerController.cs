@@ -8,6 +8,7 @@ namespace BGS_Task.Gameplay.Player
     {
         #region EXPOSED_FIELDS
         [SerializeField] private float movementThreshold = 0.1f;
+        [SerializeField] private Animator animator = null;
         #endregion
 
         #region PRIVATE_FIELDS
@@ -28,6 +29,9 @@ namespace BGS_Task.Gameplay.Player
             {
                 Move(movement);
             }
+
+            animator.SetFloat("X", movement.x);
+            animator.SetFloat("Y", movement.y);
         }
         #endregion
 
