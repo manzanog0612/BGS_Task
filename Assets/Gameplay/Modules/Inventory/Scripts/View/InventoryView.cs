@@ -1,59 +1,85 @@
 using UnityEngine;
 
-using BGS_Task.Gameplay.Common.Items;
-using BGS_Task.Gameplay.Inventory.Entity.InventorySlots;
-using BGS_Task.Gameplay.Inventory.Entity.Slot;
 using BGS_Task.Gameplay.Inventory.Entity.MouseFollower;
+using System;
+using UnityEngine.UI;
 
 namespace BGS_Task.Gameplay.Inventory.View
 {
     public class InventoryView : MonoBehaviour
     {
         #region EXPOSED_FIELDS
-        [SerializeField] private InventorySlotsController gridController = null;
         [SerializeField] private ItemMouseFollower itemMouseFollower = null;
+        [SerializeField] private Transform holder = null;
+        [SerializeField] private Animator animator = null;
+        [SerializeField] Button btnClose = null;
         #endregion
 
-        #region PRIVATE_FIELDS
-        private ItemConfig grabbedItem = null;
-        private SlotController grabbedItemSlot = null;
+        #region CONSTANTS
+        private const string openAnim = "Open";
+        #endregion
+
+        #region ACTIONS
+        private Action<bool> onToggleView, toggleBlocker;
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init()
+        public void Init(Action<bool> onToggleView, Action<bool> toggleBlocker)
         {
-            gridController.Init(OnGrabItem, OnDropItem);
+            this.onToggleView = onToggleView;
+            this.toggleBlocker = toggleBlocker;
+
             itemMouseFollower.Init();
+            TurnPointerOff();
+
+            TogglePanel(false);
+
+            btnClose.onClick.AddListener(() => ToggleView(false));
         }
 
-        public void OnItemReset()
+        public void ToggleView(bool status)
         {
-            grabbedItemSlot.Configue(grabbedItem);
-            itemMouseFollower.Toggle(false);
-        }
-        #endregion
+            toggleBlocker.Invoke(true);
 
-        #region PRIVATE_METHODS
-        private void OnGrabItem(ItemConfig item, SlotController slot)
-        {
-            grabbedItem = item;
-            grabbedItemSlot = slot;
-            itemMouseFollower.Configure(item.Icon);
-        }
-
-        private void OnDropItem(SlotController slot)
-        {
-            if (slot.IsCompatible(grabbedItem))
+            if (status)
             {
-                slot.Configue(grabbedItem);
-                itemMouseFollower.Toggle(false);
+                TogglePanel(status);
+                animator.SetBool(openAnim, true);
             }
             else
             {
-                OnItemReset();
+                animator.SetBool(openAnim, false);
             }
+        }
 
-            gridController.Refresh();
+        public void ConfigurePointer(Sprite sprite)
+        {
+            itemMouseFollower.Configure(sprite);
+        }
+
+        public void TurnPointerOff()
+        {
+            itemMouseFollower.Toggle(false);
+        }
+
+        #region ANIMATOR_METHODS
+        public void OnClose()
+        {
+            TogglePanel(false);
+            toggleBlocker.Invoke(false);
+        }
+        public void OnOpenend()
+        {
+            toggleBlocker.Invoke(false);
+        }
+        #endregion
+        #endregion
+
+        #region PRIVATE_METHODS
+        private void TogglePanel(bool status)
+        {
+            holder.gameObject.SetActive(status);
+            onToggleView.Invoke(status);
         }
         #endregion
     }

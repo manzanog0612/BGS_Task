@@ -16,6 +16,11 @@ namespace BGS_Task.Gameplay.Inventory.Entity.MouseFollower
         #region UNITY_CALLS        
         private void Update()
         {
+            if (canvasRect == null)
+            {
+                return;
+            }
+
             Vector3 mousePosition = Input.mousePosition;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, mousePosition, null, out Vector2 anchoredPosition);
             imageToFollowMouse.rectTransform.anchoredPosition = anchoredPosition;

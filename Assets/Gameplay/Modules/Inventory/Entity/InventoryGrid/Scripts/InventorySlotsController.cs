@@ -12,30 +12,35 @@ namespace BGS_Task.Gameplay.Inventory.Entity.InventorySlots
     public class InventorySlotsController : MonoBehaviour
     {
         #region EXPOSED_FIELDS
-        [SerializeField] private SlotController[] slots = null;
+        [SerializeField] private List<SlotController> slots = null;
+        #endregion
+
+        #region PRIVATE_FIELDS
+        private List<CharacterSlotController> characterSlots = new List<CharacterSlotController>();
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init(Action<ItemConfig, SlotController> onGrabItem, Action<SlotController> onDropItem)
+        public void Init(Action<ItemConfig, SlotController> onGrabItem, Action<SlotController> onDropItem, List<ItemConfig> defaultEquipesItems)
         {
-            for (int i = 0; i < slots.Length; i++)
+            for (int i = 0; i < slots.Count; i++)
             {
+                if (slots[i] is CharacterSlotController characterSlot)
+                {
+                    characterSlot.SetEmptyConfig(Array.Find(defaultEquipesItems.ToArray(), item => characterSlot.IsSameType(item)));
+                    characterSlots.Add(characterSlot);
+                }
+
                 slots[i].Init(onGrabItem, onDropItem);
             }
         }
 
         public void Configure(List<ItemConfig> equipedItems, List<ItemConfig> storedItems)
         {
-            List<CharacterSlotController> characterSlots = new List<CharacterSlotController>();
             List<SlotController> inventorySlots = new List<SlotController>();
 
-            for (int i = 0; i < slots.Length; i++)
+            for (int i = 0; i < slots.Count; i++)
             {
-                if (slots[i] is CharacterSlotController characterSlot)
-                {
-                    characterSlots.Add(characterSlot);
-                }
-                else
+                if (slots[i] is not CharacterSlotController)
                 {
                     inventorySlots.Add(slots[i]);
                 }
@@ -43,7 +48,7 @@ namespace BGS_Task.Gameplay.Inventory.Entity.InventorySlots
 
             for (int i = 0; i < equipedItems.Count; i++)
             {
-                CharacterSlotController characterSlot = characterSlots.Find(slot => slot.IsCompatible(equipedItems[i]));
+                CharacterSlotController characterSlot = characterSlots.Find(slot => slot.IsSameType(equipedItems[i]));
                 characterSlot.Configue(equipedItems[i]);
             }
 
@@ -57,17 +62,21 @@ namespace BGS_Task.Gameplay.Inventory.Entity.InventorySlots
         {
             List<SlotController> filledSlots = new List<SlotController>();
 
-            for (int i = 0; i < slots.Length; i++)
+            for (int i = slots.Count - 1; i >= 0 ; i--)
             {
                 if (!slots[i].IsEmpty && slots[i].CanBeRearranged())
                 {
                     filledSlots.Add(slots[i]);
+                    slots.Remove(slots[i]);
                 }
             }
+
+            filledSlots.Reverse();
 
             for (int i = 0; i < filledSlots.Count; i++)
             {
                 filledSlots[i].transform.SetSiblingIndex(i);
+                slots.Insert(i, filledSlots[i]);
             }
         }
         #endregion

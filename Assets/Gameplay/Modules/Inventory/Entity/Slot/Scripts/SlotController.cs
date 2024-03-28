@@ -61,6 +61,11 @@ namespace BGS_Task.Gameplay.Inventory.Entity.Slot
 
         public void OnGrab()
         {
+            if (IsEmpty)
+            {
+                return;
+            }
+
             onGrabItem.Invoke(item, this);
             Configue(null);
         }

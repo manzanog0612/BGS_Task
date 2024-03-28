@@ -1,10 +1,17 @@
+using System.Collections.Generic;
+
 using UnityEngine;
 
-namespace BGS_Task.Gameplay.Character
+using BGS_Task.Gameplay.Character.View;
+using BGS_Task.Gameplay.Common.Items.Handler;
+using BGS_Task.Gameplay.Common.Items;
+
+namespace BGS_Task.Gameplay.Character.Controller
 {
     public class CharacterController : MonoBehaviour
     {
         #region EXPOSED_FIELDS
+        [SerializeField] protected CharacterView characterView = null;
         [SerializeField] private float speed = 1f;
         #endregion
 
@@ -20,6 +27,25 @@ namespace BGS_Task.Gameplay.Character
         #endregion
 
         #region PUBLIC_METHODS
+        public virtual void Init()
+        {
+            body = GetComponent<Rigidbody2D>();
+        }
+
+        public void Configure(List<string> equipedParts)
+        {
+            List<ItemConfig> items = ItemsHandler.Instance.GetItems(equipedParts);
+
+            List<CharacterItemConfig> equipedPartsConfig = new List<CharacterItemConfig>();
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                equipedPartsConfig.Add(items[i] as CharacterItemConfig);
+            }
+
+            characterView.Configure(equipedPartsConfig);
+        }
+
         public void Move(Vector2 movement)
         {
             Vector2 currentVelocity = body.velocity;
@@ -37,7 +63,7 @@ namespace BGS_Task.Gameplay.Character
             }
 
             body.velocity = currentVelocity;
-            body.AddForce(movement * speed);
+            body.AddForce(movement * speed * Time.fixedDeltaTime);
         }
         #endregion
     }
