@@ -15,12 +15,14 @@ namespace BGS_Task.Gameplay.Common.Items
         [SerializeField] private string id = null;
         [SerializeField] private Sprite icon = null;
         [SerializeField] private ITEM_TYPE type = ITEM_TYPE.OTHER;
+        [SerializeField] private int price = 100;
         #endregion
 
         #region PROPERTIES
         public string Id { get => id; }
         public Sprite Icon { get => icon; }
         public ITEM_TYPE Type { get => type; }
+        public int Price { get => price; }
         #endregion
     }
 }

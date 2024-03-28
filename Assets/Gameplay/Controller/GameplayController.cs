@@ -1,10 +1,13 @@
+using System.Collections.Generic;
+
+using UnityEngine;
+
 using BGS_Task.Gameplay.Common.File;
 using BGS_Task.Gameplay.Common.Items;
 using BGS_Task.Gameplay.Inventory.Controller;
 using BGS_Task.Gameplay.Model;
 using BGS_Task.Gameplay.Player.Controller;
-using System.Collections.Generic;
-using UnityEngine;
+using BGS_Task.Gameplay.Store.Controller;
 
 namespace BGS_Task.Gameplay.Controller
 {
@@ -14,6 +17,7 @@ namespace BGS_Task.Gameplay.Controller
         [SerializeField] private PlayerController playerController = null;
         [SerializeField] private TextAsset gameplayJson = null;
         [SerializeField] private InventoryController inventoryController = null;
+        [SerializeField] private StoreController storeController = null;
         [SerializeField] private ItemConfig[] items = null; //debug
         #endregion
 
@@ -50,12 +54,16 @@ namespace BGS_Task.Gameplay.Controller
             //----
 
             playerController.Init(gameplayModel.playerModel, gameplayModel.defaultEquipedItems.items);
-            inventoryController.Init(gameplayModel.playerModel.inventory, gameplayModel.defaultEquipedItems.items,
-                onToggleView: (status) =>
-                {
-                    playerController.ToggleMovement(!status);
-                },
-                playerController.RefreshView);
+            inventoryController.Init(gameplayModel.playerModel.inventory, gameplayModel.defaultEquipedItems.items, 
+                TogglePlayerMovementIfUIOn, playerController.RefreshView);
+            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel.inventory, TogglePlayerMovementIfUIOn);
+        }
+        #endregion
+
+        #region PRIVATE_METHODS
+        private void TogglePlayerMovementIfUIOn(bool uiOn)
+        {
+            playerController.ToggleMovement(!uiOn);
         }
         #endregion
     }

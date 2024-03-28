@@ -42,7 +42,7 @@ namespace BGS_Task.Gameplay.Inventory.Controller
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.I))
             {
                 if (open)
                 {

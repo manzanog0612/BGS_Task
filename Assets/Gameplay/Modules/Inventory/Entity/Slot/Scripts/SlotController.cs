@@ -1,22 +1,12 @@
 using System;
 
-using UnityEngine;
-using UnityEngine.UI;
-
 using BGS_Task.Gameplay.Common.Items;
+using BGS_Task.Gameplay.Common.Items.View;
 
 namespace BGS_Task.Gameplay.Inventory.Entity.Slot
 {
-    public class SlotController : MonoBehaviour
+    public class SlotController : ItemView
     {
-        #region EXPOSED_FIELDS
-        [SerializeField] private Image icon = null;
-        #endregion
-
-        #region PRIVATE_FIELDS
-        private ItemConfig item = null;
-        #endregion
-
         #region ACTIONS
         private Action<ItemConfig, SlotController> onGrabItem = null;
         private Action<SlotController> onDropItem = null;
@@ -33,20 +23,6 @@ namespace BGS_Task.Gameplay.Inventory.Entity.Slot
             this.onDropItem = onDropItem;
 
             Configue(null);
-        }
-
-        public virtual void Configue(ItemConfig itemConfig)
-        {
-            item = itemConfig;
-
-            if (itemConfig == null)
-            {
-                ToggleIcon(false);
-            }
-            else
-            {
-                SetIcon(itemConfig.Icon);
-            }
         }
 
         public virtual bool IsCompatible(ItemConfig itemConfig)
@@ -73,19 +49,6 @@ namespace BGS_Task.Gameplay.Inventory.Entity.Slot
         public void OnDrop()
         {
             onDropItem.Invoke(this);
-        }
-        #endregion
-
-        #region PRIVATE_METHODS
-        private void SetIcon(Sprite sprite)
-        {
-            icon.sprite = sprite;
-            ToggleIcon(true);
-        }
-
-        private void ToggleIcon(bool status)
-        {
-            icon.gameObject.SetActive(status);
         }
         #endregion
     }
