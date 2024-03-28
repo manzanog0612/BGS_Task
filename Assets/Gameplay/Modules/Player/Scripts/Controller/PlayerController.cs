@@ -1,0 +1,48 @@
+using UnityEngine;
+
+using BGS_Task.Gameplay.Player.Model;
+
+using CharacterController = BGS_Task.Gameplay.Character.CharacterController;
+
+namespace BGS_Task.Gameplay.Player.Controller
+{
+    public class PlayerController : CharacterController
+    {
+        #region EXPOSED_FIELDS
+        [SerializeField] private float movementThreshold = 0.1f;
+        [SerializeField] private Animator animator = null;
+        #endregion
+
+        #region PRIVATE_FIELDS
+        private PlayerModel model = null;
+        #endregion
+
+        #region UNITY_CALLS
+        private void LateUpdate()
+        {
+            Vector2 movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+            //player moves in only 1 direction at time
+            if (Mathf.Abs(movement.x) > movementThreshold)
+            {
+                movement.y = 0; 
+                Move(movement);
+            }
+            else if (Mathf.Abs(movement.y) > movementThreshold)
+            {
+                Move(movement);
+            }
+
+            animator.SetFloat("X", movement.x);
+            animator.SetFloat("Y", movement.y);
+        }
+        #endregion
+
+        #region PUBLIC_METHODS
+        public void Init(PlayerModel model)
+        {
+            this.model = model;
+        }
+        #endregion
+    }
+}
