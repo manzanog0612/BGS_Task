@@ -37,12 +37,10 @@ namespace BGS_Task.Gameplay.Store.Controller
 
         private bool closeEnough = false;
         private bool open = false;
-        private bool firstTime = true;
         #endregion
 
         #region ACTION
         private Action onCurrencyValuesChanged = null;
-        private Action<DialogConfig, Action> showDialog = null;
         #endregion
 
         #region UNITY_CALLS
@@ -55,26 +53,17 @@ namespace BGS_Task.Gameplay.Store.Controller
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-                if (firstTime)
-                {
-                    firstTime = false;
-                    showDialog.Invoke(dialogConfig, Toggle);
-
-                    return;
-                }
-
                 Toggle();
             }
         }
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init(StoreModel model, PlayerModel playerModel, Action<bool> onToggleView, Action onCurrencyValuesChanged, Action<DialogConfig, Action> showDialog)
+        public void Init(StoreModel model, PlayerModel playerModel, Action<bool> onToggleView, Action onCurrencyValuesChanged)
         {
             this.model = model;
             this.inventoryModel = playerModel.inventory;
             this.playerModel = playerModel;
-            this.showDialog = showDialog;
 
             this.onCurrencyValuesChanged = onCurrencyValuesChanged;
 

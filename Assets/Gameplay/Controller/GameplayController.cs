@@ -44,9 +44,9 @@ namespace BGS_Task.Gameplay.Controller
             playerController.Init(gameplayModel.playerModel, gameplayModel.defaultEquipedItems.items);
             inventoryController.Init(gameplayModel.playerModel.inventory, gameplayModel.defaultEquipedItems.items,
                 OnToggleInventory, playerController.RefreshView);
-            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel, OnToggleShop, currencyView.Refresh, dialogView.ShowDialog);
+            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel, OnToggleShop, currencyView.Refresh);
             currencyView.Init(gameplayModel.playerModel);
-            dialogView.Init();
+            dialogView.Init(OnToggleDialog);
         }
         #endregion
 
@@ -54,12 +54,21 @@ namespace BGS_Task.Gameplay.Controller
         private void OnToggleInventory(bool status)
         {
             storeController.enabled = !status;
+            dialogView.enabled = !status;
             playerController.ToggleMovement(!status);
         }
 
         private void OnToggleShop(bool status)
         {
             inventoryController.enabled = !status;
+            dialogView.enabled = !status;
+            playerController.ToggleMovement(!status);
+        }
+
+        private void OnToggleDialog(bool status)
+        {
+            inventoryController.enabled = !status;
+            storeController.enabled = !status;
             playerController.ToggleMovement(!status);
         }
         #endregion

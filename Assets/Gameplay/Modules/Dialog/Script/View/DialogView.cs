@@ -17,13 +17,23 @@ namespace BGS_Task.Gameplay.Dialog.View
         [SerializeField] private TextWritterEffect textWritterEffect = null;
         #endregion
 
+        #region ACTIONS
+        private Action<bool> onToggleView = null;
+        #endregion
+
+        #region PROPERTIES
+        public bool AlreadyOpen => holder.activeSelf;
+        #endregion
+
         #region CONSTANTS
         private const string openAnim = "Open";
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init()
+        public void Init(Action<bool> onToggleView)
         {
+            this.onToggleView = onToggleView;
+
             btnClose.onClick.AddListener(() =>
             { 
                 if (textWritterEffect.Typing)
@@ -36,8 +46,13 @@ namespace BGS_Task.Gameplay.Dialog.View
                 }});
         }
 
-        public void ShowDialog(DialogConfig dialogConfig, Action onFinish)
+        public void ShowDialog(DialogConfig dialogConfig, Action onFinish = null)
         {
+            if (!enabled)
+            {
+                return;
+            }
+
             ToggleView(true);
             textWritterEffect.StartTyping(dialogConfig.Text, onFinish);
         }
@@ -46,7 +61,8 @@ namespace BGS_Task.Gameplay.Dialog.View
         {
             if (status)
             {
-                holder.SetActive(status);
+                holder.SetActive(true);
+                onToggleView.Invoke(true);
             }
 
             animator.SetBool(openAnim, status);
@@ -56,6 +72,7 @@ namespace BGS_Task.Gameplay.Dialog.View
         public void OnClose()
         {
             holder.SetActive(false);
+            onToggleView.Invoke(false);
         }
         #endregion
         #endregion

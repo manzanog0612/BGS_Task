@@ -20,6 +20,7 @@ namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
         private string targetText = "";
 
         private Coroutine typingCoroutine = null;
+        private Action onFinish = null;
         #endregion
 
         #region PROPERTIES
@@ -27,8 +28,10 @@ namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
         #endregion
 
         #region PUBLIC_METHODS
-        public void StartTyping(string newText, Action onFinish)
+        public void StartTyping(string newText, Action onFinish = null)
         {
+            this.onFinish = onFinish;
+
             if (typingCoroutine != null)
             { 
                 StopCoroutine(typingCoroutine); 
@@ -49,7 +52,7 @@ namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
                 }
 
                 Typing = false;
-                onFinish.Invoke();
+                onFinish?.Invoke();
                 typingCoroutine = null;
             }
         }
@@ -61,6 +64,8 @@ namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
             }
 
             txt.text = targetText;
+            Typing = false;
+            onFinish?.Invoke();
         }
         #endregion        
     }
