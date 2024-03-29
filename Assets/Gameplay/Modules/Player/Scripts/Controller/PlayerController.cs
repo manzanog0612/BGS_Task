@@ -72,7 +72,7 @@ namespace BGS_Task.Gameplay.Player.Controller
             {
                 equipedParts.AddRange(defaultItems);
             }
-            else if (equipedParts.Count < defaultItems.Count)
+            else
             {
                 for (int i = 0; i < defaultItems.Count; i++)
                 {

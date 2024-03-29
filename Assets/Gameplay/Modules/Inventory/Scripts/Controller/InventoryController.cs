@@ -105,13 +105,11 @@ namespace BGS_Task.Gameplay.Inventory.Controller
                 {
                     inventoryModel.equipedItems.items.Add(grabbedItem.Id);
                     inventoryModel.storedItems.items.Remove(grabbedItem.Id);
-                    onUpdateCharacterView.Invoke();
                 }
                 else if(grabbedItemSlot is CharacterSlotController)
                 {
                     inventoryModel.storedItems.items.Add(grabbedItem.Id);
-                    inventoryModel.equipedItems.items.Remove(grabbedItem.Id);
-                    onUpdateCharacterView.Invoke();
+                    inventoryModel.equipedItems.items.Remove(grabbedItem.Id);                   
                 }
 
                 slot.Configue(grabbedItem);
@@ -121,6 +119,8 @@ namespace BGS_Task.Gameplay.Inventory.Controller
             {
                 OnItemReset();
             }
+
+            onUpdateCharacterView.Invoke();
 
             gridController.Refresh();
         }
