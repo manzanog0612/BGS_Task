@@ -42,7 +42,7 @@ namespace BGS_Task.Gameplay.Store.Controller
         #region UNITY_CALLS
         private void Update()
         {
-            if (/*closeEnough ||*/ blocker.activeSelf) //means animation is still playing, so we can't interact with the inventory
+            if (!closeEnough || blocker.activeSelf) //means animation is still playing, so we can't interact with the inventory
             {
                 return;
             }
@@ -74,7 +74,7 @@ namespace BGS_Task.Gameplay.Store.Controller
 
             this.onCurrencyValuesChanged = onCurrencyValuesChanged;
 
-            //eventTrigger.onTriggerEvent += (closeEnough) => this.closeEnough = closeEnough;
+            eventTrigger.onTriggerEvent += (closeEnough) => this.closeEnough = closeEnough;
 
             inventoryGrid.Init(OnItemSelected, onItemAction: () => OnItemAction(true));
             storeGrid.Init(OnItemSelected, onItemAction: () => OnItemAction(false));
