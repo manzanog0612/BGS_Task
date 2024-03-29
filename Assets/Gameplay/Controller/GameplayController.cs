@@ -6,6 +6,7 @@ using BGS_Task.Gameplay.Model;
 using BGS_Task.Gameplay.Player.Controller;
 using BGS_Task.Gameplay.Store.Controller;
 using BGS_Task.Gameplay.Modules.Currency.View;
+using BGS_Task.Gameplay.Dialog.View;
 
 namespace BGS_Task.Gameplay.Controller
 {
@@ -17,6 +18,7 @@ namespace BGS_Task.Gameplay.Controller
         [SerializeField] private InventoryController inventoryController = null;
         [SerializeField] private StoreController storeController = null;
         [SerializeField] private CurrencyView currencyView = null;
+        [SerializeField] private DialogView dialogView = null;
         #endregion
 
         #region PRIVATE_FIELDS
@@ -42,8 +44,9 @@ namespace BGS_Task.Gameplay.Controller
             playerController.Init(gameplayModel.playerModel, gameplayModel.defaultEquipedItems.items);
             inventoryController.Init(gameplayModel.playerModel.inventory, gameplayModel.defaultEquipedItems.items,
                 OnToggleInventory, playerController.RefreshView);
-            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel, OnToggleShop, currencyView.Refresh);
+            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel, OnToggleShop, currencyView.Refresh, dialogView.ShowDialog);
             currencyView.Init(gameplayModel.playerModel);
+            dialogView.Init();
         }
         #endregion
 

@@ -11,6 +11,7 @@ using BGS_Task.Gameplay.Store.Model;
 using BGS_Task.Gameplay.Store.View;
 using BGS_Task.Gameplay.Inventory.Model;
 using BGS_Task.Gameplay.Player.Model;
+using BGS_Task.Gameplay.Dialog.Config;
 
 namespace BGS_Task.Gameplay.Store.Controller
 {
@@ -20,8 +21,11 @@ namespace BGS_Task.Gameplay.Store.Controller
         [SerializeField] private StoreGridController inventoryGrid = null;
         [SerializeField] private StoreGridController storeGrid = null;
         [SerializeField] private GameObject blocker = null;
-        [SerializeField] private EventTrigger eventTrigger = null;
+        [SerializeField] private ClosenessEventTrigger eventTrigger = null;
         [SerializeField] private StoreView storeView = null;
+
+        [Header("Event Config")]
+        [SerializeField] private DialogConfig dialogConfig = null;
         #endregion
 
         #region PRIVATE_FIELDS
@@ -33,10 +37,12 @@ namespace BGS_Task.Gameplay.Store.Controller
 
         private bool closeEnough = false;
         private bool open = false;
+        private bool firstTime = true;
         #endregion
 
         #region ACTION
         private Action onCurrencyValuesChanged = null;
+        private Action<DialogConfig, Action> showDialog = null;
         #endregion
 
         #region UNITY_CALLS
@@ -49,28 +55,26 @@ namespace BGS_Task.Gameplay.Store.Controller
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-                if (open)
+                if (firstTime)
                 {
-                    storeView.ToggleView(false);
+                    firstTime = false;
+                    showDialog.Invoke(dialogConfig, Toggle);
+
+                    return;
                 }
-                else
-                {
-                    List<ItemConfig> inventoryItems = ItemsHandler.Instance.GetItems(inventoryModel.storedItems.items);
-                    List<ItemConfig> storeItems = ItemsHandler.Instance.GetItems(model.availableItems.items);
-                    inventoryGrid.Configure(inventoryItems);
-                    storeGrid.Configure(storeItems);
-                    storeView.ToggleView(true);
-                }
+
+                Toggle();
             }
         }
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init(StoreModel model, PlayerModel playerModel, Action<bool> onToggleView, Action onCurrencyValuesChanged)
+        public void Init(StoreModel model, PlayerModel playerModel, Action<bool> onToggleView, Action onCurrencyValuesChanged, Action<DialogConfig, Action> showDialog)
         {
             this.model = model;
             this.inventoryModel = playerModel.inventory;
             this.playerModel = playerModel;
+            this.showDialog = showDialog;
 
             this.onCurrencyValuesChanged = onCurrencyValuesChanged;
 
@@ -87,6 +91,22 @@ namespace BGS_Task.Gameplay.Store.Controller
         #endregion
 
         #region PRIVATE_METHODS
+        private void Toggle()
+        {
+            if (open)
+            {
+                storeView.ToggleView(false);
+            }
+            else
+            {
+                List<ItemConfig> inventoryItems = ItemsHandler.Instance.GetItems(inventoryModel.storedItems.items);
+                List<ItemConfig> storeItems = ItemsHandler.Instance.GetItems(model.availableItems.items);
+                inventoryGrid.Configure(inventoryItems);
+                storeGrid.Configure(storeItems);
+                storeView.ToggleView(true);
+            }
+        }
+
         private void OnItemSelected(ItemConfig itemConfig)
         {
             if (model.availableItems.items.Contains(itemConfig.Id)) //is store item

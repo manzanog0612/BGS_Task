@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BGS_Task.Gameplay.Common.Event
 {
-    public class EventTrigger : MonoBehaviour
+    public class ClosenessEventTrigger : MonoBehaviour
     {
         public Action<bool> onTriggerEvent = null;
 
