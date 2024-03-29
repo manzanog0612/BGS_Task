@@ -14,6 +14,7 @@ namespace BGS_Task.Gameplay.Character.View
         [SerializeField] private SpriteLibrary hair = null;
         [SerializeField] private SpriteLibrary top = null;
         [SerializeField] private SpriteLibrary bottom = null;
+        [SerializeField] private AudioSource footsetpSound = null;
         #endregion
 
         #region CONSTANTS
@@ -53,6 +54,13 @@ namespace BGS_Task.Gameplay.Character.View
             animator.SetFloat(xValue, movement.x);
             animator.SetFloat(yValue, movement.y);
         }
+
+        #region ANIMATOR_METHODS
+        public void PlayFootstepSound()
+        {
+            footsetpSound.Play();
+        }
+        #endregion
         #endregion
     }
 }

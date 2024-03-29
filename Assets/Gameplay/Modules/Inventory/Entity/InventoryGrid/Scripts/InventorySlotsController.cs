@@ -43,6 +43,7 @@ namespace BGS_Task.Gameplay.Inventory.Entity.InventorySlots
                 if (slots[i] is not CharacterSlotController)
                 {
                     inventorySlots.Add(slots[i]);
+                    inventorySlots[i].Configue(null);
                 }
             }
 

@@ -95,7 +95,7 @@ namespace BGS_Task.Gameplay.Store.Entity.StoreGrid
         {
             if (selectedItem == sellingItem)
             {
-                selectedItem?.ToggleSelection(false);
+                DeselectItem();
                 return;
             }
 
