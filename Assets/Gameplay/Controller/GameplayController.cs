@@ -48,6 +48,14 @@ namespace BGS_Task.Gameplay.Controller
             currencyView.Init(gameplayModel.playerModel);
             dialogView.Init(OnToggleDialog);
         }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+        }
         #endregion
 
         #region PRIVATE_METHODS

@@ -1,10 +1,9 @@
+using System;
 using System.Collections;
 
 using UnityEngine;
 
 using TMPro;
-using System;
-using System.Net.NetworkInformation;
 
 namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
 {
@@ -13,6 +12,7 @@ namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
         #region EXPOSED_FIELDS
         [SerializeField] private TextMeshProUGUI txt = null;
         [SerializeField] private float typingSpeed = 0.05f;
+        [SerializeField] private AudioSource sfxLetterSpawnSound = null;
         #endregion
 
         #region PRIVATE_FIELDS
@@ -48,6 +48,11 @@ namespace BGS_Task.Gameplay.Dialog.Entity.TextWritter
                 {
                     currentText += targetText[i];
                     txt.text = currentText;
+
+                    if (targetText[i] != ' ')
+                    { 
+                        sfxLetterSpawnSound.Play();
+                    }
                     yield return new WaitForSeconds(typingSpeed);
                 }
 
