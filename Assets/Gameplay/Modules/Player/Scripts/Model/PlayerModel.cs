@@ -9,6 +9,7 @@ namespace BGS_Task.Gameplay.Player.Model
     {
         #region PUBLIC_FIELDS
         public InventoryModel inventory = null;
+        public int currency = 0;
         #endregion
     }
 }

@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-
 using UnityEngine;
 
 using BGS_Task.Gameplay.Common.File;
-using BGS_Task.Gameplay.Common.Items;
 using BGS_Task.Gameplay.Inventory.Controller;
 using BGS_Task.Gameplay.Model;
 using BGS_Task.Gameplay.Player.Controller;
 using BGS_Task.Gameplay.Store.Controller;
+using BGS_Task.Gameplay.Modules.Currency.View;
 
 namespace BGS_Task.Gameplay.Controller
 {
@@ -18,11 +16,11 @@ namespace BGS_Task.Gameplay.Controller
         [SerializeField] private TextAsset gameplayJson = null;
         [SerializeField] private InventoryController inventoryController = null;
         [SerializeField] private StoreController storeController = null;
-        [SerializeField] private ItemConfig[] items = null; //debug
+        [SerializeField] private CurrencyView currencyView = null;
         #endregion
 
         #region PRIVATE_FIELDS
-       private GameplayModel gameplayModel = null;
+        private GameplayModel gameplayModel = null;
         #endregion
 
         #region UNITY_CALLS
@@ -41,29 +39,25 @@ namespace BGS_Task.Gameplay.Controller
                 gameplayModel = FileHandler.Load<GameplayModel>(path);
             }
 
-            //debug
-
-            List<string> ids = new List<string>();
-
-            for (int i = 0; i < items.Length; i++)
-            {
-                ids.Add(items[i].Id);
-            }
-
-            gameplayModel.playerModel.inventory.storedItems.items.AddRange(ids);
-            //----
-
             playerController.Init(gameplayModel.playerModel, gameplayModel.defaultEquipedItems.items);
-            inventoryController.Init(gameplayModel.playerModel.inventory, gameplayModel.defaultEquipedItems.items, 
-                TogglePlayerMovementIfUIOn, playerController.RefreshView);
-            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel.inventory, TogglePlayerMovementIfUIOn);
+            inventoryController.Init(gameplayModel.playerModel.inventory, gameplayModel.defaultEquipedItems.items,
+                OnToggleInventory, playerController.RefreshView);
+            storeController.Init(gameplayModel.storeModel, gameplayModel.playerModel, OnToggleShop, currencyView.Refresh);
+            currencyView.Init(gameplayModel.playerModel);
         }
         #endregion
 
         #region PRIVATE_METHODS
-        private void TogglePlayerMovementIfUIOn(bool uiOn)
+        private void OnToggleInventory(bool status)
         {
-            playerController.ToggleMovement(!uiOn);
+            storeController.enabled = !status;
+            playerController.ToggleMovement(!status);
+        }
+
+        private void OnToggleShop(bool status)
+        {
+            inventoryController.enabled = !status;
+            playerController.ToggleMovement(!status);
         }
         #endregion
     }

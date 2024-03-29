@@ -21,9 +21,7 @@ namespace BGS_Task.Gameplay.Inventory.Entity.MouseFollower
                 return;
             }
 
-            Vector3 mousePosition = Input.mousePosition;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, mousePosition, null, out Vector2 anchoredPosition);
-            imageToFollowMouse.rectTransform.anchoredPosition = anchoredPosition;
+            UpdatePosition();
         }
         #endregion
 
@@ -36,12 +34,22 @@ namespace BGS_Task.Gameplay.Inventory.Entity.MouseFollower
         public void Configure(Sprite sprite)
         {
             imageToFollowMouse.sprite = sprite;
+            UpdatePosition();
             Toggle(true);
         }
 
         public void Toggle(bool status)
         {
             gameObject.SetActive(status);
+        }
+        #endregion
+
+        #region PRIVATE_METHODS
+        private void UpdatePosition()
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, mousePosition, null, out Vector2 anchoredPosition);
+            imageToFollowMouse.rectTransform.anchoredPosition = anchoredPosition;
         }
         #endregion
     }

@@ -23,7 +23,7 @@ namespace BGS_Task.Gameplay.Inventory.Controller
 
         #region PRIVATE_FIELDS
         private InventoryModel inventoryModel = null;
-        
+
         private ItemConfig grabbedItem = null;
         private SlotController grabbedItemSlot = null;
 

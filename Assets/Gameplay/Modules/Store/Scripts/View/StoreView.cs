@@ -6,16 +6,11 @@ namespace BGS_Task.Gameplay.Store.View
 {
     public class StoreView : PanelAnimatedView
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
+        [SerializeField] private Transform notEnoughCurrency = null;
 
-        // Update is called once per frame
-        void Update()
+        public void ToggleNotEnoughCurrency(bool status)
         {
-            
+            notEnoughCurrency.gameObject.SetActive(status);
         }
     }
 }

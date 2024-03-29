@@ -10,6 +10,7 @@ using BGS_Task.Gameplay.Store.Entity.StoreGrid;
 using BGS_Task.Gameplay.Store.Model;
 using BGS_Task.Gameplay.Store.View;
 using BGS_Task.Gameplay.Inventory.Model;
+using BGS_Task.Gameplay.Player.Model;
 
 namespace BGS_Task.Gameplay.Store.Controller
 {
@@ -26,11 +27,16 @@ namespace BGS_Task.Gameplay.Store.Controller
         #region PRIVATE_FIELDS
         private StoreModel model = null;
         private InventoryModel inventoryModel = null;
+        private PlayerModel playerModel = null;
 
         private ItemConfig selectedItem = null;
 
         private bool closeEnough = false;
         private bool open = false;
+        #endregion
+
+        #region ACTION
+        private Action onCurrencyValuesChanged = null;
         #endregion
 
         #region UNITY_CALLS
@@ -60,10 +66,13 @@ namespace BGS_Task.Gameplay.Store.Controller
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init(StoreModel model, InventoryModel inventoryModel, Action<bool> onToggleView)
+        public void Init(StoreModel model, PlayerModel playerModel, Action<bool> onToggleView, Action onCurrencyValuesChanged)
         {
             this.model = model;
-            this.inventoryModel = inventoryModel;
+            this.inventoryModel = playerModel.inventory;
+            this.playerModel = playerModel;
+
+            this.onCurrencyValuesChanged = onCurrencyValuesChanged;
 
             //eventTrigger.onTriggerEvent += (closeEnough) => this.closeEnough = closeEnough;
 
@@ -72,22 +81,32 @@ namespace BGS_Task.Gameplay.Store.Controller
 
             onToggleView += (status) => open = status;
             storeView.Init(onToggleView, blocker.SetActive);
+
+            storeView.ToggleNotEnoughCurrency(false);
         }
         #endregion
 
         #region PRIVATE_METHODS
         private void OnItemSelected(ItemConfig itemConfig)
         {
-            if (model.availableItems.items.Contains(itemConfig.Id))
+            if (model.availableItems.items.Contains(itemConfig.Id)) //is store item
             {
                 inventoryGrid.DeselectItem();
+
+                if (playerModel.currency < itemConfig.Price)
+                {
+                    storeGrid.DeselectItem();
+                    storeView.ToggleNotEnoughCurrency(true);
+                    return;
+                }
             }
-            else
+            else //is inventory item
             {
                 storeGrid.DeselectItem();
             }
 
             selectedItem = itemConfig;
+            storeView.ToggleNotEnoughCurrency(false);
         }
 
         private void OnItemAction(bool sell)
@@ -97,13 +116,17 @@ namespace BGS_Task.Gameplay.Store.Controller
                 storeGrid.AddNewItemToGrid(selectedItem);
                 model.availableItems.items.Add(selectedItem.Id);
                 inventoryModel.storedItems.items.Remove(selectedItem.Id);
+                playerModel.currency += selectedItem.Price;
             }
             else
             {
                 inventoryGrid.AddNewItemToGrid(selectedItem);
                 inventoryModel.storedItems.items.Add(selectedItem.Id);
                 model.availableItems.items.Remove(selectedItem.Id);
+                playerModel.currency -= selectedItem.Price;
             }
+
+            onCurrencyValuesChanged.Invoke();
         }
         #endregion
     }
