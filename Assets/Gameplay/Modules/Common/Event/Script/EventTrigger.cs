@@ -8,14 +8,22 @@ namespace BGS_Task.Gameplay.Common.Event
     {
         public Action<bool> onTriggerEvent = null;
 
+        private const string playerTag = "Player";
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            onTriggerEvent.Invoke(true);
+            if (collision.gameObject.CompareTag(playerTag))
+            { 
+                onTriggerEvent.Invoke(true); 
+            }
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
-            onTriggerEvent.Invoke(false);
+            if (collision.gameObject.CompareTag(playerTag))
+            {
+                onTriggerEvent.Invoke(false);
+            }
         }
     }
 }
